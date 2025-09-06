@@ -1,8 +1,8 @@
 {
-    "name": "GattusStatus",
+    "name": "gatus_status",
     "short": "Channel metrics and analysis cog for gatus discord messages",
     "description": "Channel metrics and analysis cog for gatus discord messages.",
-    "install_msg": "Thank you for installing GattusStatus! Use `[p]gatusstatus` to get started.",
+    "install_msg": "Thank you for installing gatus_status! Use `[p]gatus_status` to get started.",
     "end_user_data_statement": "This cog does not store any end user data.",
     "tags": ["metrics", "analysis", "discord", "channel"],
     "requirements": [],

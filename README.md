@@ -4,7 +4,7 @@ This repository contains assorted cogs for [Red DiscordBot](https://docs.discord
 
 ## Cogs
 
-- **GattusStatus**: Channel metrics and analysis cog for gatus discord messages.
+- **gatus_status**: Channel metrics and analysis cog for gatus discord messages.
 
 ## Installation
 
