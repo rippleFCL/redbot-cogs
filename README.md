@@ -11,7 +11,7 @@ This repository contains assorted cogs for [Red DiscordBot](https://docs.discord
 Add this repository to your Red instance using Downloader:
 
 ```
-[p]repo add ripple-cogs <repo_url>
+[p]repo add ripple-cogs https://github.com/rippleFCL/bws-cache.git
 ```
 Then install the desired cog:
 ```
