@@ -1,4 +1,5 @@
-from .main import GatusMetrics
+from .main import GatusStatus
+
 
 async def setup(bot):
-    await bot.add_cog(GatusMetrics(bot))
+    await bot.add_cog(GatusStatus(bot))

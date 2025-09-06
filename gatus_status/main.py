@@ -84,7 +84,7 @@ class GatusTimeline:
         return self.total_time(True)
 
 
-class GatusMetrics(commands.Cog):
+class GatusStatus(commands.Cog):
     """A cog to scan Discord channels and aggregate useful metrics."""
 
     def __init__(self, bot):
