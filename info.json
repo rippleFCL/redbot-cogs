@@ -1,0 +1,6 @@
+{
+    "author": ["ripple"],
+    "description": "A collection of assorted cogs for Red DiscordBot.",
+    "install_msg": "Thank you for installing this repository!",
+    "short": "Assorted Red cogs by ripple."
+}

@@ -1,18 +1,13 @@
-from calendar import c
+
 import discord
 from redbot.core import commands, Config, checks
-from redbot.core.utils.chat_formatting import box, humanize_list
-from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.predicates import ReactionPredicate
-import asyncio
 from datetime import datetime, timedelta, timezone
-from collections import defaultdict, Counter
 import re
-from typing import Optional, Dict, List, Tuple
+from typing import Dict, List
 import logging
 from dataclasses import dataclass
 
-log = logging.getLogger("red.utc-total")
+log = logging.getLogger("red.gatus_status")
 
 @dataclass
 class GatusData:
@@ -34,16 +29,13 @@ class GatusTimeline:
 
     def add_entry(self, entry: GatusData):
         if not self.history:
-            print("No history found, adding initial entry.")
             self.history.append(GatusEvent(length=timedelta(0), end_data=entry.date, status=not entry.status))
             return
 
         last_event = self.history[-1]
         if last_event.status == entry.status:
-            print("Status changed")
             self.history.append(GatusEvent(length=(entry.date - last_event.end_data), end_data=entry.date, status=not entry.status))
         else:
-            print("Status unchanged, updating last event length.")
 
     @property
     def end(self):
@@ -106,14 +98,14 @@ class GatusMetrics(commands.Cog):
 
         self.config.register_guild(**default_guild)
 
-    @commands.group(name="gatus_metrics", aliases=["gm"])
+    @commands.group(name="gatus_status", aliases=["gs"])
     @commands.guild_only()
-    async def utc_total(self, ctx):
+    async def gatus_status(self, ctx):
         """UTC Total channel analysis commands."""
         if ctx.invoked_subcommand is None:
             await ctx.send_help(ctx.command)
 
-    @utc_total.command(name="setchannel", aliases=["sc"])
+    @gatus_status.command(name="setchannel", aliases=["sc"])
     @checks.admin_or_permissions(manage_channels=True)
     async def set_channel(self, ctx, channel: discord.TextChannel = None):
         """Set the channel to analyze for metrics.
@@ -126,7 +118,7 @@ class GatusMetrics(commands.Cog):
         await self.config.guild(ctx.guild).target_channel.set(channel.id)
         await ctx.send(f"✅ Set target channel to {channel.mention}")
 
-    @utc_total.command(name="metrics")
+    @gatus_status.command(name="metrics", aliases=["m"])
     async def get_metrics(self, ctx, days: int | None = None):
         """Generate metrics for the configured channel or specified channel.
 
@@ -160,39 +152,6 @@ class GatusMetrics(commands.Cog):
             log.exception("Error during channel analysis")
             await loading_msg.edit(content=f"❌ Error during analysis: {str(e)}")
 
-    @utc_total.command(name="testembed")
-    async def test_embed(self, ctx, status: str = "up", service_name: str = "labbers/seeg"):
-        """Generate a test embed in Gatus alert format.
-
-        Args:
-            service_name: Name of the service (default: "labbers/seeg MC")
-            status: Alert status - "up" or "down" (default: "up")
-        """
-        # Determine embed color based on status
-        if status.lower() == "up":
-            color = discord.Color.green()
-            status_text = "resolved after passing successfully 1 time(s) in a row"
-            condition_emoji = ":white_check_mark:"
-        else:
-            color = discord.Color.red()
-            status_text = "triggered after failing 1 time(s) in a row"
-            condition_emoji = ":x:"
-
-        embed = discord.Embed(
-            title=":helmet_with_white_cross: Gatus",
-            description=f"An alert for **{service_name}** has been {status_text}",
-            color=color,
-            timestamp=datetime.now(timezone.utc)
-        )
-
-        embed.add_field(
-            name="Condition results",
-            value=f"{condition_emoji} - [CONNECTED] == true",
-            inline=False
-        )
-
-        await ctx.send(embed=embed)
-
     async def _create_metrics_embed(self, channel: discord.TextChannel, days: int) -> discord.Embed:
         history = channel.history(limit=None, after=datetime.now(timezone.utc) - timedelta(days=days))
 
@@ -218,8 +177,6 @@ class GatusMetrics(commands.Cog):
         # Add detailed stats for each labber
         if timelines:
             for timeline in timelines:
-                print(len(timeline.history))
-                print(timeline.history)
                 # Format uptime/downtime durations
                 total_up_time = timeline.total_time_up
                 total_down_time = timeline.total_time_down
@@ -295,7 +252,6 @@ class GatusMetrics(commands.Cog):
             name = "Unknown"
 
         # Determine status from description
-        print(embed.fields)
         if ":white_check_mark:" in embed.fields[0].value:
             status = True
         else:
