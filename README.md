@@ -1,2 +1,2 @@
-# utc-total-cog
-A cog to total uptime kuma stats in a discord channel
+# My assorted cogs
+thats about it ngl

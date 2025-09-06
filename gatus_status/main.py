@@ -180,7 +180,7 @@ class GatusMetrics(commands.Cog):
 
         embed = discord.Embed(
             title=":helmet_with_white_cross: Gatus",
-            description=f"An alert for {service_name} has been {status_text}",
+            description=f"An alert for **{service_name}** has been {status_text}",
             color=color,
             timestamp=datetime.now(timezone.utc)
         )
