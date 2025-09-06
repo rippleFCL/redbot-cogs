@@ -1,0 +1,20 @@
+[project]
+name = "utc-total-cog"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "ripple"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">3.10,<3.12"
+dependencies = [
+    "red-discordbot (>=3.5.22,<4.0.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
