@@ -107,8 +107,7 @@ class GatusStatus(commands.Cog):
     @commands.guild_only()
     async def gatus_status(self, ctx):
         """Gatus status channel analysis commands."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help(ctx.command)
+        pass
 
     @gatus_status.command(name="setchannel", aliases=["sc"])
     @checks.admin_or_permissions(manage_channels=True)
@@ -227,7 +226,7 @@ class GatusStatus(commands.Cog):
 
         return embed
 
-    async def get_gatus_data(self, history): 
+    async def get_gatus_data(self, history):
         messages = [message async for message in history]
         gattus_data: list[GatusData] = []
         for message in messages:
