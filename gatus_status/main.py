@@ -144,10 +144,10 @@ class GatusStatus(commands.Cog):
         loading_msg = await ctx.send("🔍 Analyzing channel for metrics...")
 
         try:
-            embed = await self._create_metrics_embed(channel, analyse_days)
+            with ctx.typing():
+                embed = await self._create_metrics_embed(channel, analyse_days)
 
-            await loading_msg.edit(content="", embed=embed)
-
+                await loading_msg.edit(content="", embed=embed)
         except Exception as e:
             log.exception("Error during channel analysis")
             await loading_msg.edit(content=f"❌ Error during analysis: {str(e)}")
