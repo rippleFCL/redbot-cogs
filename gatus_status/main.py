@@ -35,7 +35,6 @@ class GatusTimeline:
         last_event = self.history[-1]
         if last_event.status == entry.status:
             self.history.append(GatusEvent(length=(entry.date - last_event.end_data), end_data=entry.date, status=not entry.status))
-        else:
 
     @property
     def end(self):
