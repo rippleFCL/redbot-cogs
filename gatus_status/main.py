@@ -1,10 +1,10 @@
-import discord
-from redbot.core import commands, Config, checks
-from datetime import datetime, timedelta, timezone
-import re
-from typing import Dict, List
 import logging
+import re
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
+
+import discord
+from redbot.core import Config, checks, commands
 
 log = logging.getLogger("red.ripple.gatus_status")
 
@@ -25,7 +25,7 @@ class GatusEvent:
 
 class GatusTimeline:
     def __init__(self, name: str):
-        self.history: List[GatusEvent] = []
+        self.history: list[GatusEvent] = []
         self.name = name
 
     def add_entry(self, entry: GatusData):
@@ -49,7 +49,7 @@ class GatusTimeline:
 
     @classmethod
     def from_data(cls, gatus_data: list[GatusData]) -> list["GatusTimeline"]:
-        timelines: Dict[str, GatusTimeline] = {}
+        timelines: dict[str, GatusTimeline] = {}
         for entry in gatus_data:
             if entry.labber not in timelines:
                 timelines[entry.labber] = GatusTimeline(name=entry.labber)
