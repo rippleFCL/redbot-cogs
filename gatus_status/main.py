@@ -169,7 +169,7 @@ class GatusStatus(commands.Cog):
         # Create the main embed
         embed = discord.Embed(
             title="📊 Gatus Status Metrics",
-            description=f"Analysis for the last {days} day(s) in {channel.mention}",
+            description=f"Analysis of {channel.mention}",
             color=discord.Color.blue(),
             timestamp=datetime.now(timezone.utc),
         )
