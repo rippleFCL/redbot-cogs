@@ -7,7 +7,7 @@ from typing import Dict, List
 import logging
 from dataclasses import dataclass
 
-log = logging.getLogger("red.gatus_status")
+log = logging.getLogger("red.ripple.gatus_status")
 
 @dataclass
 class GatusData:
