@@ -148,7 +148,7 @@ class GatusStatus(commands.Cog):
         loading_msg = await ctx.send("🔍 Analysing channel for metrics...")
 
         try:
-            with ctx.typing():
+            async with ctx.typing():
                 embed = await self._create_metrics_embed(channel, analyse_days)
 
                 await loading_msg.edit(content="", embed=embed)
