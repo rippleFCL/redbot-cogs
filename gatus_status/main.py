@@ -227,7 +227,7 @@ class GatusStatus(commands.Cog):
 
         return embed
 
-    async def get_gatus_data(self, history):  # -> list[Any]:
+    async def get_gatus_data(self, history): 
         messages = [message async for message in history]
         gattus_data: list[GatusData] = []
         for message in messages:
