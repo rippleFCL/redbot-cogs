@@ -129,7 +129,7 @@ class GatusStatus(commands.Cog):
         # Determine which channel to analyze
         target_channel_id = await self.config.guild(ctx.guild).target_channel()
         if not target_channel_id:
-            await ctx.send("❌ No target channel configured. Use `utctotal setchannel` first or specify a channel.")
+            await ctx.send("❌ No target channel configured. Use `gatus_status setchannel` first or specify a channel.")
             return
         channel = ctx.guild.get_channel(target_channel_id)
         if not channel:
