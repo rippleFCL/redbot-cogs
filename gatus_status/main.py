@@ -1,3 +1,4 @@
+from json import load
 import logging
 import re
 from dataclasses import dataclass
@@ -55,7 +56,7 @@ class GatusTimeline:
                 timelines[entry.labber] = GatusTimeline(name=entry.labber)
             timelines[entry.labber].add_entry(entry)
 
-        return list(timelines.values())
+        return sorted(list(timelines.values()), key=lambda t: t.uptime_percentage, reverse=True)
 
     def total_events(self, event: bool) -> int:
         offset = 0
@@ -77,10 +78,6 @@ class GatusTimeline:
         return self.total_events(False)
 
     @property
-    def total_ups(self):
-        return self.total_events(True)
-
-    @property
     def total_time_down(self):
         return self.total_time(False)
 
@@ -88,6 +85,12 @@ class GatusTimeline:
     def total_time_up(self):
         return self.total_time(True)
 
+    @property
+    def uptime_percentage(self):
+        total_time = self.total_time_up + self.total_time_down
+        if total_time.total_seconds() > 0:
+            return (self.total_time_up.total_seconds() / total_time.total_seconds()) * 100
+        return 100.0
 
 class GatusStatus(commands.Cog):
     """A cog to scan Discord channels and aggregate useful metrics."""
@@ -145,16 +148,17 @@ class GatusStatus(commands.Cog):
         else:
             analyse_days = days
         # Send initial message
-        loading_msg = await ctx.send("🔍 Analysing channel for metrics...")
 
-        try:
-            async with ctx.typing():
+        async with ctx.typing():
+            loading_msg = await ctx.send("🔍 Analysing channel for metrics...")
+            try:
                 embed = await self._create_metrics_embed(channel, analyse_days)
+            except Exception as e:
+                log.exception("Error during channel analysis")
+                await loading_msg.edit(content=f"❌ Error during analysis: {str(e)}")
+                return
 
-                await loading_msg.edit(content="", embed=embed)
-        except Exception as e:
-            log.exception("Error during channel analysis")
-            await loading_msg.edit(content=f"❌ Error during analysis: {str(e)}")
+        await loading_msg.edit(content="", embed=embed)
 
     async def _create_metrics_embed(self, channel: discord.TextChannel, days: int) -> discord.Embed:
         history = channel.history(limit=None, after=datetime.now(timezone.utc) - timedelta(days=days))
@@ -183,12 +187,7 @@ class GatusStatus(commands.Cog):
                 total_up_time = timeline.total_time_up
                 total_down_time = timeline.total_time_down
 
-                # Calculate uptime percentage
-                total_time = total_up_time + total_down_time
-                if total_time.total_seconds() > 0:
-                    uptime_percentage = (total_up_time.total_seconds() / total_time.total_seconds()) * 100
-                else:
-                    uptime_percentage = 100.0
+                uptime_percentage = timeline.uptime_percentage
 
                 # Format time strings
                 up_days = total_up_time.days
@@ -203,7 +202,6 @@ class GatusStatus(commands.Cog):
                 # Create field value with all timeline properties
                 field_value = (
                     f"**Uptime:** {uptime_percentage:.5f}%\n"
-                    f"**Total Ups:** {timeline.total_ups}\n"
                     f"**Total Downs:** {timeline.total_downs}\n"
                     f"**Time Up:** {up_days}d {up_hours}h {up_minutes}m\n"
                     f"**Time Down:** {down_days}d {down_hours}h {down_minutes}m\n"
@@ -211,12 +209,7 @@ class GatusStatus(commands.Cog):
                 )
 
                 # Determine status emoji based on uptime
-                if uptime_percentage >= 99:
-                    status_emoji = "🟢"
-                elif uptime_percentage >= 95:
-                    status_emoji = "🟡"
-                else:
-                    status_emoji = "🔴"
+                status_emoji = "🟢" if timeline.end.status else "🔴"
 
                 embed.add_field(name=f"{status_emoji} {timeline.name}", value=field_value, inline=True)
         else:
